@@ -54,42 +54,6 @@ No explicit addiction label is provided, which makes the problem ideal for **uns
 
 ## Exploratory Visualizations
 
-```{python}
-#| label: load-pkgs
-#| message: false
-#| echo: false
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Load dataset
-data = pd.read_csv("data/teen_phone_addiction_dataset.csv")
-data.head()
-
-#| label: hist-usage
-#| fig-cap: "Distribution of Daily Screen Time"
-#| fig-align: center
-#| echo: false
-
-plt.figure(figsize=(6,4))
-sns.histplot(data['Screen Time (hours/day)'], bins=20, kde=True, color='teal')
-plt.xlabel("Daily Screen Time (Hours)")
-plt.ylabel("Number of Teens")
-plt.title("Distribution of Teen Screen Time")
-plt.show()
-
-#| label: age-vs-usage
-#| fig-cap: "Screen Time by Age"
-#| fig-align: center
-#| echo: false
-
-plt.figure(figsize=(6,4))
-sns.boxplot(x='Age', y='Screen Time (hours/day)', data=data, palette='coolwarm')
-plt.title("Teen Screen Time by Age")
-plt.show()
-
 ## Research Questions
 
 -   **Which teens exhibit anomalous smartphone usage patterns** compared to their peers?
