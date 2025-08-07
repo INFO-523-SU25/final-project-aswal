@@ -40,7 +40,7 @@ No explicit addiction label is provided, which makes the problem ideal for **uns
 ### Selected Column Definitions
 
 | Column | Description |
-|-----------------------|-------------------------------------------------|
+|-----------------------|------------------------------------------------|
 | Age | Teen's age in years |
 | Gender | Male / Female / Other |
 | Screen Time (hours/day) | Average daily phone usage |
@@ -68,6 +68,7 @@ import seaborn as sns
 data = pd.read_csv("data/teen_phone_addiction_dataset.csv")
 data.head()
 ```
+
 ```{python}
 #| label: hist-usage
 #| fig-cap: "Distribution of Daily Screen Time"
@@ -82,6 +83,7 @@ plt.ylabel("Number of Teens")
 plt.title("Distribution of Teen Daily Phone Usage")
 plt.show()
 ```
+
 ```{python}
 #| label: age-vs-usage
 #| fig-cap: "Screen Time by Age"
@@ -133,7 +135,7 @@ plt.show()
 ## Project Timeline
 
 | Week | Tasks |
-|----------------|--------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | **Aug 6–10** | Download and clean dataset, conduct initial EDA |
 | **Aug 11–15** | Implement Isolation Forest & One-Class SVM models |
 | **Aug 16–18** | Implement Autoencoder, evaluate overlap with negative impacts |
@@ -143,7 +145,7 @@ plt.show()
 
 ## Repository Structure
 
-```bash
+``` bash
 teen-smartphone-addiction/
 │
 ├── data/
@@ -174,5 +176,3 @@ teen-smartphone-addiction/
 ├── README.md
 └── requirements.txt
 ```
-
-
