@@ -1,11 +1,11 @@
 ---
-title: "Proposal title"
+title: "Detecting Potential Teen Smartphone Addiction via Anomaly Detection"
 subtitle: "Proposal"
 author: 
-  - name: "Team Name - Team member 1, Team member 2,..."
+  - name: "Vivek Aswal"
     affiliations:
       - name: "College of Information Science, University of Arizona"
-description: "Project description"
+description: "Identify anomalous patterns in teen smartphone usage data to detect potential smartphone addiction and associated behavioral impacts."
 format:
   html:
     code-tools: true
@@ -19,27 +19,149 @@ execute:
 jupyter: python3
 ---
 
+## Introduction
+
+Smartphone usage among teens has risen sharply in recent years, raising concerns about potential addiction and its impact on mental health, academics, and sleep. In this project, we propose using unsupervised anomaly detection techniques to identify teens who show potentially addictive patterns in phone usage compared to their peers.
+
+## High-Level Goal
+
+We aim to apply anomaly detection techniques to identify teens who display unusually high smartphone usage patterns, potentially signaling addiction risk. The goal is to detect outliers in daily phone use, social media interaction, and late-night usage habits. Insights from this analysis may inform awareness campaigns, parental interventions, and guidelines for healthy digital habits.
+
+## Dataset Description
+
+The dataset is sourced from [Kaggle: Teen Smartphone Addiction Impact Dataset](https://www.kaggle.com/datasets/sumedh1507/teen-phone-addiction). It includes over 1,000 survey responses from teenagers, covering:
+
+- **Demographics**: Age, gender, parental restrictions  
+- **Usage Metrics**: Daily screen time, social media usage, late-night phone use  
+- **Behavioral Impact**: Effects on academics, sleep, and relationships  
+
+No explicit addiction label is provided, which makes the problem ideal for **unsupervised anomaly detection**.
+
+### Selected Column Definitions
+
+| Column                   | Description                                             |
+|--------------------------|---------------------------------------------------------|
+| Age                     | Teen's age in years                                     |
+| Gender                  | Male / Female / Other                                   |
+| Screen Time (hours/day) | Average daily phone usage                               |
+| Social Media Usage      | Time spent on platforms like Instagram, TikTok, etc.    |
+| Late Night Use (%)      | % of nights spent on phone past midnight               |
+| Effect on Academics     | Self-reported impact on school performance              |
+| Effect on Sleep         | Self-reported sleep disruption                          |
+| Parental Restrictions   | Whether parental controls are in place                  |
+
+---
+
+## Exploratory Visualizations
+
 ```{python}
 #| label: load-pkgs
 #| message: false
+#| echo: false
+
 import numpy as np
-```
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-## Dataset
+# Load dataset
+data = pd.read_csv("data/teen_phone_addiction.csv")
+data.head()
 
-```{python}
-#| label: load-dataset
-#| message: false
-```
 
-A brief description of your dataset including its provenance, dimensions, etc. as well as the reason why you chose this dataset.
+#| label: hist-usage
+#| fig-cap: "Distribution of Daily Screen Time"
+#| fig-align: center
+#| echo: false
 
-Make sure to load the data and use inline code for some of this information.
+plt.figure(figsize=(6,4))
+sns.histplot(data['Screen Time (hours/day)'], bins=20, kde=True, color='teal')
+plt.xlabel("Daily Screen Time (Hours)")
+plt.ylabel("Number of Teens")
+plt.title("Distribution of Teen Screen Time")
+plt.show()
 
-## Questions
+#| label: age-vs-usage
+#| fig-cap: "Screen Time by Age"
+#| fig-align: center
+#| echo: false
 
-The two questions you want to answer.
+plt.figure(figsize=(6,4))
+sns.boxplot(x='Age', y='Screen Time (hours/day)', data=data, palette='coolwarm')
+plt.title("Teen Screen Time by Age")
+plt.show()
 
-## Analysis plan
+## Research Questions
 
--   A plan for answering each of the questions including the variables involved, variables to be created (if any), external data to be merged in (if any).
+- **Which teens exhibit anomalous smartphone usage patterns** compared to their peers?
+- **Can these anomalies be linked to self-reported negative impacts** on sleep, academics, or relationships?
+
+---
+
+## Analysis Plan
+
+### 1. Data Preprocessing
+- Handle missing values
+- Encode categorical variables (e.g., `Gender`, `Parental Restrictions`)
+- Scale numeric variables (`Screen Time`, `Social Media Usage`, `Late Night Use`, etc.)
+
+### 2. Exploratory Data Analysis (EDA)
+- Analyze trends across age and gender
+- Visualize correlation between phone usage patterns and reported behavioral impacts
+
+### 3. Modeling Approaches
+- **Isolation Forest** – Detect multivariate outliers in smartphone usage behavior
+- **One-Class SVM** – Learn decision boundaries around typical usage
+- **Z-score / Statistical Thresholding** – Use standard deviation to detect extreme usage
+- *(Optional)* **Autoencoder Neural Network** – Learn compressed normal usage representation and detect reconstruction errors
+
+### 4. Evaluation Strategy
+- Proportion of users flagged as anomalies
+- Overlap between anomalies and negative self-reports (sleep, academics, relationships)
+- Inject synthetic anomalies to test detection precision (if needed)
+
+---
+
+## Project Timeline
+
+| Week         | Tasks                                                             |
+|--------------|-------------------------------------------------------------------|
+| **Aug 6–10** | Download and clean dataset, conduct initial EDA                  |
+| **Aug 11–15**| Implement Isolation Forest & One-Class SVM models                |
+| **Aug 16–18**| Implement Autoencoder, evaluate overlap with negative impacts    |
+| **Aug 19–20**| Finalize Quarto report, create visualizations and presentation   |
+
+---
+
+## Repository Structure
+
+```bash
+teen-smartphone-addiction/
+│
+├── data/
+│   ├── raw/                # Original dataset from Kaggle
+│   ├── processed/          # Cleaned datasets
+│   └── codebook.md         # Data dictionary
+│
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   ├── 02_isolation_forest.ipynb
+│   ├── 03_one_class_svm.ipynb
+│   └── 04_autoencoder.ipynb
+│
+├── src/
+│   ├── preprocessing.py
+│   ├── anomaly_models.py
+│   ├── evaluation.py
+│   └── utils.py
+│
+├── reports/
+│   ├── proposal.qmd
+│   ├── final_report.qmd
+│   └── presentation.qmd
+│
+├── dashboards/
+│   └── app.py              # Optional Streamlit dashboard
+│
+├── README.md
+└── requirements.txt
