@@ -54,16 +54,20 @@ No explicit addiction label is provided, which makes the problem ideal for **uns
 
 ## Exploratory Visualizations
 
-\`\`\`{python} #\| label: load-pkgs #\| message: false #\| echo: false
+```{python}
+#| label: load-pkgs
+#| message: false
+#| echo: false
 
-import numpy as np 
-import pandas as pd 
-import matplotlib.pyplot as plt 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dataset
 
-data = pd.read_csv("data/teen_phone_addiction.csv") data.head()
+data = pd.read_csv("data/teen_phone_addiction_dataset.csv")
+data.head()
 
 #\| label: hist-usage #\| fig-cap: "Distribution of Daily Screen Time" #\| fig-align: center #\| echo: false
 
