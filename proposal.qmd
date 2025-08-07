@@ -74,11 +74,12 @@ data.head()
 #| fig-align: center
 #| echo: false
 
+# Histogram of daily phone usage
 plt.figure(figsize=(6,4))
-sns.histplot(data['Screen Time (hours/day)'], bins=20, kde=True, color='teal')
-plt.xlabel("Daily Screen Time (hours)")
+sns.histplot(data['Daily_Usage_Hours'], bins=20, kde=True, color='teal')
+plt.xlabel("Daily Phone Usage (hours)")
 plt.ylabel("Number of Teens")
-plt.title("Distribution of Teen Screen Time")
+plt.title("Distribution of Teen Daily Phone Usage")
 plt.show()
 ```
 ```{python}
@@ -87,9 +88,10 @@ plt.show()
 #| fig-align: center
 #| echo: false
 
+# Boxplot: Usage by Age
 plt.figure(figsize=(6,4))
-sns.boxplot(x='Age', y='Screen Time (hours/day)', data=data, palette='coolwarm')
-plt.title("Teen Screen Time by Age")
+sns.boxplot(x='Age', y='Daily_Usage_Hours', data=data, palette='coolwarm')
+plt.title("Teen Daily Phone Usage by Age")
 plt.show()
 ```
 
@@ -162,13 +164,15 @@ teen-smartphone-addiction/
 │   └── utils.py
 │
 ├── reports/
-│   ├── [proposal.qmd](http://_vscodecontentref_/1)
+│   ├── proposal.qmd
 │   ├── final_report.qmd
-│   └── [presentation.qmd](http://_vscodecontentref_/2)
+│   └── presentation.qmd
 │
 ├── dashboards/
 │   └── app.py # Optional Streamlit dashboard
 │
-├── [README.md](http://_vscodecontentref_/3)
-└── [requirements.txt](http://_vscodecontentref_/4)
+├── README.md
+└── requirements.txt
 ```
+
+
