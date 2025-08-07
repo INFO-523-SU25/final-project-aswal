@@ -75,8 +75,8 @@ data.head()
 #| echo: false
 
 plt.figure(figsize=(6,4))
-sns.histplot(data['Screen Time'], bins=20, kde=True, color='teal')
-plt.xlabel("Daily Screen Time")
+sns.histplot(data['Screen Time (hours/day)'], bins=20, kde=True, color='teal')
+plt.xlabel("Daily Screen Time (hours)")
 plt.ylabel("Number of Teens")
 plt.title("Distribution of Teen Screen Time")
 plt.show()
