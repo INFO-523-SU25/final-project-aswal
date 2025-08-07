@@ -126,3 +126,37 @@ plt.figure(figsize=(6,4)) sns.boxplot(x='Age', y='Screen Time (hours/day)', data
 ## Repository Structure
 
 \`\`\`bash teen-smartphone-addiction/ │ ├── data/ │ ├── raw/ \# Original dataset from Kaggle │ ├── processed/ \# Cleaned datasets │ └── codebook.md \# Data dictionary │ ├── notebooks/ │ ├── 01_eda.ipynb │ ├── 02_isolation_forest.ipynb │ ├── 03_one_class_svm.ipynb │ └── 04_autoencoder.ipynb │ ├── src/ │ ├── preprocessing.py │ ├── anomaly_models.py │ ├── evaluation.py │ └── utils.py │ ├── reports/ │ ├── proposal.qmd │ ├── final_report.qmd │ └── presentation.qmd │ ├── dashboards/ │ └── app.py \# Optional Streamlit dashboard │ ├── README.md └── requirements.txt
+
+## Repository Structure
+
+\`\`\`bash
+teen-smartphone-addiction/
+│
+├── data/
+│   ├── raw/ # Original dataset from Kaggle
+│   ├── processed/ # Cleaned datasets
+│   └── codebook.md # Data dictionary
+│
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   ├── 02_isolation_forest.ipynb
+│   ├── 03_one_class_svm.ipynb
+│   └── 04_autoencoder.ipynb
+│
+├── src/
+│   ├── preprocessing.py
+│   ├── anomaly_models.py
+│   ├── evaluation.py
+│   └── utils.py
+│
+├── reports/
+│   ├── proposal.qmd
+│   ├── final_report.qmd
+│   └── presentation.qmd
+│
+├── dashboards/
+│   └── app.py # Optional Streamlit dashboard
+│
+├── README.md
+└── requirements.txt
+\`\`\`
