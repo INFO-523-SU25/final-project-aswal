@@ -138,7 +138,7 @@ plt.show()
 
 ## Repository Structure
 
-\`\`\`bash
+```bash
 teen-smartphone-addiction/
 │
 ├── data/
@@ -159,13 +159,13 @@ teen-smartphone-addiction/
 │   └── utils.py
 │
 ├── reports/
-│   ├── proposal.qmd
+│   ├── [proposal.qmd](http://_vscodecontentref_/1)
 │   ├── final_report.qmd
-│   └── presentation.qmd
+│   └── [presentation.qmd](http://_vscodecontentref_/2)
 │
 ├── dashboards/
 │   └── app.py # Optional Streamlit dashboard
 │
-├── README.md
-└── requirements.txt
-\`\`\`
+├── [README.md](http://_vscodecontentref_/3)
+└── [requirements.txt](http://_vscodecontentref_/4)
+```
