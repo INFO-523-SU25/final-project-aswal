@@ -89,7 +89,7 @@ import numpy as np
 df.columns
 ```
 
-### 1. Summary Statistics
+### Summary Statistics
 ```{python}
 
 #| label: summary-stats
@@ -97,15 +97,8 @@ df.columns
 # Basic statistics for numeric columns
 df.describe()
 ```
-### 2. Missing Values Check
-```{python}
 
-#| label: missing-values
-#| message: false
-# Check for missing values
-df.isnull().sum()
-```
-### 3. Distribution of Key Numeric Features
+### Distribution of Key Numeric Features
 We examine the distributions of Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Depression_Level, and Self_Esteem.
 
 ```{python}
@@ -126,7 +119,7 @@ for col in numeric_features:
     plt.show()
 
 ```
-### 4. Correlation Analysis
+### Correlation Analysis
 We check correlations between numeric features to understand relationships between phone usage, behavioral, and psychological metrics.
 
 ```{python}
@@ -138,7 +131,7 @@ sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm')
 plt.title("Correlation Heatmap")
 plt.show()
 ```
-### 5. Gender vs. Daily Phone Usage
+### Gender vs. Daily Phone Usage
 
 ```{python}
 
@@ -148,7 +141,7 @@ sns.boxplot(x='Gender', y='Daily_Usage_Hours', data=df)
 plt.title("Daily Phone Usage by Gender")
 plt.show()
 ```
-### 6. Scatter Plot: Phone Usage vs. Sleep
+### Scatter Plot: Phone Usage vs. Sleep
 
 ```{python}
 
@@ -159,7 +152,7 @@ plt.title("Daily Phone Usage vs Sleep Hours")
 plt.show()
 ```
 
-### 7. Identifying Potential Outliers
+### Identifying Potential Outliers
 
 We will use the Z-score method to detect extreme values (potential anomalies) in `Daily_Usage_Hours` and `Addiction_Level`.
 
@@ -193,3 +186,77 @@ for col in numeric_cols:
     plt.legend()
     plt.show()
 ```
+
+### Anomaly Detection: Teen Smartphone Addiction
+
+We will use Isolation Forest to identify potential anomalies in teen smartphone usage patterns, including excessive usage or high addiction levels.
+
+```{python}
+#| label: anomaly-detection
+from sklearn.ensemble import IsolationForest
+
+# Select relevant numeric features for anomaly detection
+features = [
+    'Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance',
+    'Social_Interactions', 'Exercise_Hours', 'Anxiety_Level',
+    'Depression_Level', 'Self_Esteem', 'Parental_Control',
+    'Screen_Time_Before_Bed', 'Phone_Checks_Per_Day', 'Apps_Used_Daily',
+    'Time_on_Social_Media', 'Time_on_Gaming', 'Time_on_Education',
+    'Weekend_Usage_Hours', 'Addiction_Level'
+]
+
+X = df[features]
+
+# Initialize Isolation Forest
+iso_forest = IsolationForest(
+    n_estimators=100,
+    contamination=0.05,  # Assumes ~5% of teens are anomalous
+    random_state=42
+)
+
+# Fit model
+iso_forest.fit(X)
+
+# Predict anomalies: -1 indicates anomaly, 1 indicates normal
+df['Anomaly'] = iso_forest.predict(X)
+
+# Separate normal vs anomalous records
+anomalies = df[df['Anomaly'] == -1]
+normal = df[df['Anomaly'] == 1]
+
+print(f"Detected {len(anomalies)} potential anomalies out of {len(df)} records")
+display(anomalies)
+
+# Visualize anomalies
+plt.figure(figsize=(10,6))
+sns.scatterplot(
+    data=df,
+    x='Daily_Usage_Hours',
+    y='Addiction_Level',
+    hue='Anomaly',
+    palette={1:'blue', -1:'red'},
+    s=80
+)
+plt.title('Isolation Forest Anomaly Detection')
+plt.xlabel('Daily Usage Hours')
+plt.ylabel('Addiction Level')
+plt.show()
+```
+
+#### Interpretation:
+
+Red points indicate potential high-risk teens.
+
+Isolation Forest detects anomalies considering multiple behavioral and academic features.
+
+These teens may require attention or intervention.
+
+### Conclusion
+
+Teen smartphone addiction can be identified using multi-feature anomaly detection.
+
+Daily phone usage, sleep patterns, mental health, and academic performance all contribute to the detection model.
+
+Isolation Forest effectively highlights teens with unusual behavior patterns indicative of potential addiction.
+
+Future work could include larger datasets, longitudinal analysis, or supervised classification for predictive modeling.
