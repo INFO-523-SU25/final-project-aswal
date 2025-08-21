@@ -32,11 +32,11 @@ sns.set_theme(style="whitegrid")
 
 # Introduction
 ## Motivation
-Teen smartphone addiction is a growing concern.
+- Teen smartphone addiction is a growing concern.
 
-Excessive use can affect sleep, academic performance, and mental health.
+- Excessive use can affect sleep, academic performance, and mental health.
 
-Goal: Detect anomalies in smartphone usage patterns to identify potential risk.
+- Goal: Detect anomalies in smartphone usage patterns to identify potential risk.
 
 ## Dataset Overview
 Dataset contains information on ~3000 teenagers across 15 variables. It focuses on:
@@ -48,12 +48,6 @@ Dataset contains information on ~3000 teenagers across 15 variables. It focuses 
 - Time Distribution – hours spent on social media, gaming, and education daily.
 
 - Mental and Physical Health Proxies – exercise, sleep, anxiety, depression, and self-esteem.
-
-- Other variables include phone checks per day, purpose of phone usage, and achievements like projects or internship experience.
-
-- This dataset allows us to identify trends, detect unusual behavior, and build models to predict addiction levels.
-
-Sample size: ~3000 teens from multiple schools.
 
 # Exploratory Data Analysis
 ## Daily Usage vs Sleep Hours
