@@ -260,3 +260,65 @@ Daily phone usage, sleep patterns, mental health, and academic performance all c
 Isolation Forest effectively highlights teens with unusual behavior patterns indicative of potential addiction.
 
 Future work could include larger datasets, longitudinal analysis, or supervised classification for predictive modeling.
+
+
+## Interactive Exploration Dashboard
+
+This dashboard allows interactive exploration of anomalies detected in teen smartphone usage. Users can filter by **Daily Usage Hours**, **Addiction Level**, or **Sleep Hours** to inspect specific teens at risk.
+
+```{python}
+#| label: interactive-dashboard
+import ipywidgets as widgets
+from IPython.display import display
+
+# Define sliders for key features
+daily_usage_slider = widgets.FloatSlider(
+    value=df['Daily_Usage_Hours'].mean(),
+    min=df['Daily_Usage_Hours'].min(),
+    max=df['Daily_Usage_Hours'].max(),
+    step=0.1,
+    description='Daily Usage Hours:',
+    continuous_update=False
+)
+
+addiction_level_slider = widgets.FloatSlider(
+    value=df['Addiction_Level'].mean(),
+    min=df['Addiction_Level'].min(),
+    max=df['Addiction_Level'].max(),
+    step=0.1,
+    description='Addiction Level:',
+    continuous_update=False
+)
+
+sleep_hours_slider = widgets.FloatSlider(
+    value=df['Sleep_Hours'].mean(),
+    min=df['Sleep_Hours'].min(),
+    max=df['Sleep_Hours'].max(),
+    step=0.1,
+    description='Sleep Hours:',
+    continuous_update=False
+)
+
+# Function to filter anomalies based on slider values
+def filter_anomalies(daily_usage, addiction_level, sleep_hours):
+    filtered = anomalies[
+        (anomalies['Daily_Usage_Hours'] >= daily_usage - 1) &
+        (anomalies['Daily_Usage_Hours'] <= daily_usage + 1) &
+        (anomalies['Addiction_Level'] >= addiction_level - 1) &
+        (anomalies['Addiction_Level'] <= addiction_level + 1) &
+        (anomalies['Sleep_Hours'] >= sleep_hours - 1) &
+        (anomalies['Sleep_Hours'] <= sleep_hours + 1)
+    ]
+    if filtered.empty:
+        print("No anomalies in this range.")
+    else:
+        display(filtered[['ID','Name','Age','Gender','Daily_Usage_Hours','Sleep_Hours','Addiction_Level']])
+
+# Create interactive widget
+widgets.interact(
+    filter_anomalies,
+    daily_usage=daily_usage_slider,
+    addiction_level=addiction_level_slider,
+    sleep_hours=sleep_hours_slider
+)
+```
