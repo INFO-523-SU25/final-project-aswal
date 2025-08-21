@@ -50,7 +50,7 @@ This dataset is the foundation for anomaly detection, enabling analysis of usage
 import pandas as pd
 
 # Load the dataset
-data_path = "data/teen_smartphone_usage.csv"  # Update this path if needed
+data_path = "data/teen_phone_addiction_dataset.csv" 
 df = pd.read_csv(data_path)
 
 # Display first few rows
