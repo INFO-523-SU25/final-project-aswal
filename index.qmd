@@ -89,7 +89,7 @@ import numpy as np
 df.columns
 ```
 
-1. Summary Statistics
+### 1. Summary Statistics
 ```{python}
 
 #| label: summary-stats
@@ -97,7 +97,7 @@ df.columns
 # Basic statistics for numeric columns
 df.describe()
 ```
-2. Missing Values Check
+### 2. Missing Values Check
 ```{python}
 
 #| label: missing-values
@@ -105,7 +105,7 @@ df.describe()
 # Check for missing values
 df.isnull().sum()
 ```
-3. Distribution of Key Numeric Features
+### 3. Distribution of Key Numeric Features
 We examine the distributions of Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Depression_Level, and Self_Esteem.
 
 ```{python}
@@ -126,7 +126,7 @@ for col in numeric_features:
     plt.show()
 
 ```
-4. Correlation Analysis
+### 4. Correlation Analysis
 We check correlations between numeric features to understand relationships between phone usage, behavioral, and psychological metrics.
 
 ```{python}
@@ -138,7 +138,7 @@ sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm')
 plt.title("Correlation Heatmap")
 plt.show()
 ```
-5. Gender vs. Daily Phone Usage
+### 5. Gender vs. Daily Phone Usage
 
 ```{python}
 
@@ -148,7 +148,7 @@ sns.boxplot(x='Gender', y='Daily_Usage_Hours', data=df)
 plt.title("Daily Phone Usage by Gender")
 plt.show()
 ```
-6. Scatter Plot: Phone Usage vs. Sleep
+### 6. Scatter Plot: Phone Usage vs. Sleep
 
 ```{python}
 
@@ -159,15 +159,37 @@ plt.title("Daily Phone Usage vs Sleep Hours")
 plt.show()
 ```
 
-7. Identifying Potential Outliers
-Using z-score to detect anomalies in Daily_Usage_Hours and Addiction_Level.
+### 7. Identifying Potential Outliers
+
+We will use the Z-score method to detect extreme values (potential anomalies) in `Daily_Usage_Hours` and `Addiction_Level`.
 
 ```{python}
-
 #| label: outliers
 from scipy import stats
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+# Select numeric columns to check for outliers
 numeric_cols = ['Daily_Usage_Hours', 'Addiction_Level']
-z_scores = np.abs(stats.zscore(df[numeric_cols]))
-outliers = df[(z_scores > 3).any(axis=1)]
-outliers
+
+# Compute Z-scores
+z_scores = stats.zscore(df[numeric_cols])
+abs_z_scores = np.abs(z_scores)
+
+# Identify rows where Z-score > 3 in any column
+outliers = df[(abs_z_scores > 3).any(axis=1)]
+
+# Display detected outliers
+print("Detected Outliers:")
+display(outliers)
+
+# Visualize outliers
+for col in numeric_cols:
+    plt.figure(figsize=(8,4))
+    sns.boxplot(x=df[col])
+    plt.title(f'Boxplot of {col} (Outliers Highlighted)')
+    plt.scatter(outliers.index, outliers[col], color='red', zorder=10, label='Outliers')
+    plt.legend()
+    plt.show()
+```
