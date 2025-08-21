@@ -27,25 +27,6 @@ Smartphone usage among teenagers has seen a dramatic increase over the past deca
 
 Smartphone addiction among teens is a growing concern worldwide. Excessive use of social media, gaming apps, and late-night usage can affect mental health, sleep, and academic performance. Early identification of anomalous usage patterns can help in designing interventions. This project uses anomaly detection techniques to detect teens whose usage patterns deviate significantly from the norm.
 
----
-title: "Detecting Potential Teen Smartphone Addiction via Anomaly Detection"
-subtitle: "Dataset Description"
-author: 
-  - name: "Your Name"
-    affiliations:
-      - name: "University / Organization"
-format:
-   html:
-    code-tools: true
-    code-overflow: wrap
-    embed-resources: true
-editor: visual
-execute:
-  warning: false
-  echo: true
-jupyter: python3
----
-
 ## Dataset Description
 
 The dataset `teen_phone_addiction_dataset.csv` contains detailed information about teen smartphone usage and associated behavioral, academic, and social factors. Each record corresponds to a unique teen, capturing daily habits and psychological indicators.
@@ -106,28 +87,29 @@ import numpy as np
 
 # Display all columns
 df.columns
+```
+
 1. Summary Statistics
-{python}
-Copy
-Edit
+```{python}
+
 #| label: summary-stats
 #| message: false
 # Basic statistics for numeric columns
 df.describe()
+```
 2. Missing Values Check
-{python}
-Copy
-Edit
+```{python}
+
 #| label: missing-values
 #| message: false
 # Check for missing values
 df.isnull().sum()
+```
 3. Distribution of Key Numeric Features
 We examine the distributions of Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Depression_Level, and Self_Esteem.
 
-{python}
-Copy
-Edit
+```{python}
+
 #| label: distribution-plots
 numeric_features = ['Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance', 
                     'Social_Interactions', 'Exercise_Hours', 'Anxiety_Level', 
@@ -142,42 +124,46 @@ for col in numeric_features:
     sns.histplot(df[col], kde=True, bins=20)
     plt.title(f'Distribution of {col}')
     plt.show()
+
+```
 4. Correlation Analysis
 We check correlations between numeric features to understand relationships between phone usage, behavioral, and psychological metrics.
 
-{python}
-Copy
-Edit
+```{python}
+
 #| label: correlation
 plt.figure(figsize=(12,10))
 corr = df[numeric_features].corr()
 sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm')
 plt.title("Correlation Heatmap")
 plt.show()
+```
 5. Gender vs. Daily Phone Usage
-{python}
-Copy
-Edit
+
+```{python}
+
 #| label: gender-usage
 plt.figure(figsize=(8,5))
 sns.boxplot(x='Gender', y='Daily_Usage_Hours', data=df)
 plt.title("Daily Phone Usage by Gender")
 plt.show()
+```
 6. Scatter Plot: Phone Usage vs. Sleep
-{python}
-Copy
-Edit
+
+```{python}
+
 #| label: usage-sleep
 plt.figure(figsize=(8,5))
 sns.scatterplot(x='Daily_Usage_Hours', y='Sleep_Hours', hue='Addiction_Level', data=df, palette='viridis')
 plt.title("Daily Phone Usage vs Sleep Hours")
 plt.show()
+```
+
 7. Identifying Potential Outliers
 Using z-score to detect anomalies in Daily_Usage_Hours and Addiction_Level.
 
-{python}
-Copy
-Edit
+```{python}
+
 #| label: outliers
 from scipy import stats
 
