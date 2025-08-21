@@ -86,9 +86,102 @@ This dataset will be used for anomaly detection to identify teens at risk of pot
 import pandas as pd
 
 # Load the dataset
-data_path = "teen_phone_addiction_dataset.csv"
+data_path = "data/teen_phone_addiction_dataset.csv"
 df = pd.read_csv(data_path)
 
 # Display first few rows
 df.head()
 ```
+
+## Exploratory Data Analysis (EDA)
+
+In this section, we explore the dataset to understand the distribution of features, identify potential anomalies, and examine relationships between smartphone usage and behavioral or psychological indicators.
+
+```{python}
+#| label: eda-imports
+#| message: false
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Display all columns
+df.columns
+1. Summary Statistics
+{python}
+Copy
+Edit
+#| label: summary-stats
+#| message: false
+# Basic statistics for numeric columns
+df.describe()
+2. Missing Values Check
+{python}
+Copy
+Edit
+#| label: missing-values
+#| message: false
+# Check for missing values
+df.isnull().sum()
+3. Distribution of Key Numeric Features
+We examine the distributions of Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Depression_Level, and Self_Esteem.
+
+{python}
+Copy
+Edit
+#| label: distribution-plots
+numeric_features = ['Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance', 
+                    'Social_Interactions', 'Exercise_Hours', 'Anxiety_Level', 
+                    'Depression_Level', 'Self_Esteem', 'Screen_Time_Before_Bed', 
+                    'Phone_Checks_Per_Day', 'Apps_Used_Daily', 'Time_on_Social_Media', 
+                    'Time_on_Gaming', 'Time_on_Education', 'Family_Communication', 
+                    'Weekend_Usage_Hours', 'Addiction_Level']
+
+# Histograms
+for col in numeric_features:
+    plt.figure(figsize=(8,4))
+    sns.histplot(df[col], kde=True, bins=20)
+    plt.title(f'Distribution of {col}')
+    plt.show()
+4. Correlation Analysis
+We check correlations between numeric features to understand relationships between phone usage, behavioral, and psychological metrics.
+
+{python}
+Copy
+Edit
+#| label: correlation
+plt.figure(figsize=(12,10))
+corr = df[numeric_features].corr()
+sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm')
+plt.title("Correlation Heatmap")
+plt.show()
+5. Gender vs. Daily Phone Usage
+{python}
+Copy
+Edit
+#| label: gender-usage
+plt.figure(figsize=(8,5))
+sns.boxplot(x='Gender', y='Daily_Usage_Hours', data=df)
+plt.title("Daily Phone Usage by Gender")
+plt.show()
+6. Scatter Plot: Phone Usage vs. Sleep
+{python}
+Copy
+Edit
+#| label: usage-sleep
+plt.figure(figsize=(8,5))
+sns.scatterplot(x='Daily_Usage_Hours', y='Sleep_Hours', hue='Addiction_Level', data=df, palette='viridis')
+plt.title("Daily Phone Usage vs Sleep Hours")
+plt.show()
+7. Identifying Potential Outliers
+Using z-score to detect anomalies in Daily_Usage_Hours and Addiction_Level.
+
+{python}
+Copy
+Edit
+#| label: outliers
+from scipy import stats
+
+numeric_cols = ['Daily_Usage_Hours', 'Addiction_Level']
+z_scores = np.abs(stats.zscore(df[numeric_cols]))
+outliers = df[(z_scores > 3).any(axis=1)]
+outliers
