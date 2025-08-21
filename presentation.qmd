@@ -39,10 +39,21 @@ Excessive use can affect sleep, academic performance, and mental health.
 Goal: Detect anomalies in smartphone usage patterns to identify potential risk.
 
 ## Dataset Overview
-25+ features per teen including:
-Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Apps_Used_Daily, Screen_Time_Before_Bed, etc.
+Dataset contains information on ~3000 teenagers across 15 variables. It focuses on:
 
-Sample size: ~500 teens from multiple schools.
+- Addiction Levels – numeric measures of smartphone addiction.
+
+- Academic Performance – GPA or scores to check correlation with phone usage.
+
+- Time Distribution – hours spent on social media, gaming, and education daily.
+
+- Mental and Physical Health Proxies – exercise, sleep, anxiety, depression, and self-esteem.
+
+- Other variables include phone checks per day, purpose of phone usage, and achievements like projects or internship experience.
+
+- This dataset allows us to identify trends, detect unusual behavior, and build models to predict addiction levels.
+
+Sample size: ~3000 teens from multiple schools.
 
 # Exploratory Data Analysis
 ## Daily Usage vs Sleep Hours
@@ -107,23 +118,6 @@ plt.show()
 PCA reduces dimensionality for visualization.
 
 Highlights clustering of normal teens vs anomalies.
-
-## Interactive Exploration
-```{python}
-
-daily_usage_slider = widgets.FloatSlider(min=df['Daily_Usage_Hours'].min(), max=df['Daily_Usage_Hours'].max(), value=df['Daily_Usage_Hours'].mean(), description='Daily Usage')
-sleep_slider = widgets.FloatSlider(min=df['Sleep_Hours'].min(), max=df['Sleep_Hours'].max(), value=df['Sleep_Hours'].mean(), description='Sleep Hours')
-
-def filter_anomalies(daily_usage, sleep_hours):
-    filtered = df[(df['Daily_Usage_Hours']>=daily_usage-0.5) & (df['Daily_Usage_Hours']<=daily_usage+0.5) &
-                  (df['Sleep_Hours']>=sleep_hours-0.5) & (df['Sleep_Hours']<=sleep_hours+0.5) &
-                  (df['Anomaly']==-1)]
-    display(filtered[['ID','Name','Daily_Usage_Hours','Sleep_Hours','Addiction_Level']])
-
-widgets.interact(filter_anomalies, daily_usage=daily_usage_slider, sleep_hours=sleep_slider)
-```
-
-Explore specific teens flagged as anomalies based on interactive sliders.
 
 # Key Findings
 - Teens with high daily phone usage and low sleep are at higher risk.
