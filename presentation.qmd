@@ -48,7 +48,7 @@ Sample size: ~500 teens from multiple schools.
 ## Daily Usage vs Sleep Hours
 ```{python}
 
-df = pd.read_csv('teen_phone_addiction_dataset.csv')
+df = pd.read_csv('data/teen_phone_addiction_dataset.csv')
 sns.scatterplot(data=df, x='Daily_Usage_Hours', y='Sleep_Hours', hue='Addiction_Level', palette='coolwarm')
 plt.title("Daily Usage vs Sleep Hours")
 plt.show()
