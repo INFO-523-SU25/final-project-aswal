@@ -55,3 +55,4 @@ df = pd.read_csv(data_path)
 
 # Display first few rows
 df.head()
+```
