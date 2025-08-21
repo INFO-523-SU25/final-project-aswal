@@ -61,7 +61,7 @@ An initial visual check suggests potential anomalies.
 ## Correlation Heatmap
 ```{python}
 
-corr = df.corr()
+corr = df.select_dtypes(include='number').corr()
 plt.figure(figsize=(10,8))
 sns.heatmap(corr, annot=True, cmap='coolwarm')
 plt.title("Feature Correlation")
