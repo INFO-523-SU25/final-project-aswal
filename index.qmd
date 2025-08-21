@@ -21,3 +21,37 @@ jupyter: python3
 ## Abstract
 
 Smartphone usage among teenagers has seen a dramatic increase over the past decade, raising growing concerns about digital overdependence and its potential psychological, social, and academic consequences. This project explores the detection of potential smartphone addiction among teens by applying anomaly detection techniques to usage pattern data. Using a publicly available dataset from Kaggle, we analyze daily app usage, screen time, sleep duration, and activity logs to identify behavioral anomalies that may signal addictive tendencies. By leveraging unsupervised learning models such as Isolation Forest and Autoencoders, we aim to uncover hidden patterns and outliers in the data. The outcome of this work could support the early detection of problematic phone use and inform interventions by parents, educators, and mental health professionals. Our study emphasizes the role of data science in addressing contemporary behavioral health challenges in the digital age.
+
+
+## Introduction
+
+Smartphone addiction among teens is a growing concern worldwide. Excessive use of social media, gaming apps, and late-night usage can affect mental health, sleep, and academic performance. Early identification of anomalous usage patterns can help in designing interventions. This project uses anomaly detection techniques to detect teens whose usage patterns deviate significantly from the norm.
+
+## Dataset Description
+
+The dataset contains daily smartphone usage data for teens, collected to analyze potential signs of smartphone addiction. Each record corresponds to one teen on a specific date, including overall usage and app-specific activity.
+
+| Variable               | Type        | Description                                    |
+|------------------------|------------|-----------------------------------------------|
+| `teen_id`              | Categorical| Unique identifier for each teen               |
+| `date`                 | Date       | Observation date                               |
+| `screen_time_minutes`  | Numeric    | Total daily screen time in minutes            |
+| `app_usage_social`     | Numeric    | Minutes spent on social media apps            |
+| `app_usage_games`      | Numeric    | Minutes spent on gaming apps                  |
+| `app_usage_edu`        | Numeric    | Minutes spent on educational apps             |
+| `notifications`        | Numeric    | Number of notifications received              |
+| `night_usage`          | Numeric    | Screen time after 10 PM                        |
+
+This dataset is the foundation for anomaly detection, enabling analysis of usage patterns, identification of outliers, and detection of potentially risky smartphone behaviors among teens.
+
+```{python}
+#| label: load-data
+#| message: false
+import pandas as pd
+
+# Load the dataset
+data_path = "data/teen_smartphone_usage.csv"  # Update this path if needed
+df = pd.read_csv(data_path)
+
+# Display first few rows
+df.head()
