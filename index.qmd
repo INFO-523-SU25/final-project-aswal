@@ -27,22 +27,58 @@ Smartphone usage among teenagers has seen a dramatic increase over the past deca
 
 Smartphone addiction among teens is a growing concern worldwide. Excessive use of social media, gaming apps, and late-night usage can affect mental health, sleep, and academic performance. Early identification of anomalous usage patterns can help in designing interventions. This project uses anomaly detection techniques to detect teens whose usage patterns deviate significantly from the norm.
 
+---
+title: "Detecting Potential Teen Smartphone Addiction via Anomaly Detection"
+subtitle: "Dataset Description"
+author: 
+  - name: "Your Name"
+    affiliations:
+      - name: "University / Organization"
+format:
+   html:
+    code-tools: true
+    code-overflow: wrap
+    embed-resources: true
+editor: visual
+execute:
+  warning: false
+  echo: true
+jupyter: python3
+---
+
 ## Dataset Description
 
-The dataset contains daily smartphone usage data for teens, collected to analyze potential signs of smartphone addiction. Each record corresponds to one teen on a specific date, including overall usage and app-specific activity.
+The dataset `teen_phone_addiction_dataset.csv` contains detailed information about teen smartphone usage and associated behavioral, academic, and social factors. Each record corresponds to a unique teen, capturing daily habits and psychological indicators.
 
-| Variable               | Type        | Description                                    |
-|------------------------|------------|-----------------------------------------------|
-| `teen_id`              | Categorical| Unique identifier for each teen               |
-| `date`                 | Date       | Observation date                               |
-| `screen_time_minutes`  | Numeric    | Total daily screen time in minutes            |
-| `app_usage_social`     | Numeric    | Minutes spent on social media apps            |
-| `app_usage_games`      | Numeric    | Minutes spent on gaming apps                  |
-| `app_usage_edu`        | Numeric    | Minutes spent on educational apps             |
-| `notifications`        | Numeric    | Number of notifications received              |
-| `night_usage`          | Numeric    | Screen time after 10 PM                        |
+| Variable                     | Type        | Description                                      |
+|-------------------------------|------------|-------------------------------------------------|
+| `ID`                         | Integer    | Unique identifier for each teen                 |
+| `Name`                       | Categorical| Teen's name                                     |
+| `Age`                        | Integer    | Age of the teen                                 |
+| `Gender`                     | Categorical| Gender of the teen (Male, Female, Other)       |
+| `Location`                   | Categorical| Home location                                   |
+| `School_Grade`               | Categorical| Current school grade                             |
+| `Daily_Usage_Hours`          | Numeric    | Total daily phone usage in hours               |
+| `Sleep_Hours`                | Numeric    | Average hours of sleep per day                 |
+| `Academic_Performance`       | Numeric    | Academic performance score (0-100)            |
+| `Social_Interactions`        | Numeric    | Average social interactions per day            |
+| `Exercise_Hours`             | Numeric    | Hours spent on physical activity per day       |
+| `Anxiety_Level`              | Numeric    | Anxiety level (0-10)                            |
+| `Depression_Level`           | Numeric    | Depression level (0-10)                         |
+| `Self_Esteem`                | Numeric    | Self-esteem score (0-10)                        |
+| `Parental_Control`           | Numeric    | Level of parental control (0-10)               |
+| `Screen_Time_Before_Bed`     | Numeric    | Phone usage in hours before bed                |
+| `Phone_Checks_Per_Day`       | Numeric    | Number of times phone is checked daily         |
+| `Apps_Used_Daily`            | Numeric    | Number of apps used daily                       |
+| `Time_on_Social_Media`       | Numeric    | Hours spent on social media                     |
+| `Time_on_Gaming`             | Numeric    | Hours spent on gaming                           |
+| `Time_on_Education`          | Numeric    | Hours spent on educational apps                |
+| `Phone_Usage_Purpose`        | Categorical| Primary purpose of phone usage                 |
+| `Family_Communication`       | Numeric    | Level of family communication (0-10)          |
+| `Weekend_Usage_Hours`        | Numeric    | Phone usage on weekends in hours               |
+| `Addiction_Level`            | Numeric    | Overall addiction risk score (0-10)           |
 
-This dataset is the foundation for anomaly detection, enabling analysis of usage patterns, identification of outliers, and detection of potentially risky smartphone behaviors among teens.
+This dataset will be used for anomaly detection to identify teens at risk of potential smartphone addiction based on their usage patterns, lifestyle, and psychological factors.
 
 ```{python}
 #| label: load-data
@@ -50,7 +86,7 @@ This dataset is the foundation for anomaly detection, enabling analysis of usage
 import pandas as pd
 
 # Load the dataset
-data_path = "data/teen_phone_addiction_dataset.csv" 
+data_path = "teen_phone_addiction_dataset.csv"
 df = pd.read_csv(data_path)
 
 # Display first few rows
