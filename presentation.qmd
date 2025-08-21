@@ -1,167 +1,141 @@
 ---
-title: "Project title updated"
+title: "Detecting Potential Teen Smartphone Addiction via Anomaly Detection"
 subtitle: "INFO 523 - Summer 2025 - Final Project"
-author: "Author names"
+author: "Vivek Aswal"
 title-slide-attributes:
-  data-background-image: images/watercolour_sys02_img34_teacup-ocean.jpg
-  data-background-size: stretch
-  data-background-opacity: "0.7"
+  data-background-image: images/teen_smartphone.jpg
+  data-background-size: cover
+  data-background-opacity: "0.3"
   data-slide-number: none
 format:
   revealjs:
     theme:  ['data/customtheming.scss']
-  
 editor: visual
 jupyter: python3
 execute:
   echo: false
+  freeze: auto
 ---
 
 ```{python}
-#| label: load-packages
-#| include: false
-
-# Load packages here
 import pandas as pd
+import numpy as np
 import seaborn as sns
-
-```
-
-```{python}
-#| label: setup
-#| include: false
-#| 
-# Set up plot theme and figure resolution
-sns.set_theme(style="whitegrid")
-sns.set_context("notebook", font_scale=1.1)
-
 import matplotlib.pyplot as plt
-plt.rcParams['figure.dpi'] = 300
-plt.rcParams['savefig.dpi'] = 300
-plt.rcParams['figure.figsize'] = (6, 6 * 0.618)
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import IsolationForest
+from sklearn.decomposition import PCA
+import ipywidgets as widgets
+from IPython.display import display
+sns.set_theme(style="whitegrid")
 ```
 
+# Introduction
+## Motivation
+Teen smartphone addiction is a growing concern.
+
+Excessive use can affect sleep, academic performance, and mental health.
+
+Goal: Detect anomalies in smartphone usage patterns to identify potential risk.
+
+## Dataset Overview
+25+ features per teen including:
+Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Apps_Used_Daily, Screen_Time_Before_Bed, etc.
+
+Sample size: ~500 teens from multiple schools.
+
+# Exploratory Data Analysis
+## Daily Usage vs Sleep Hours
 ```{python}
-#| label: load-data
-#| include: false
-# Load data in Python
-mtcars = sns.load_dataset('mpg').dropna()  # mtcars dataset is similar to the mpg dataset from seaborn
-mtcars['speed'] = mtcars['horsepower'] / mtcars['weight']
 
-penguins = sns.load_dataset('penguins').dropna()
-```
-
-# Using Quarto for presentations
-
-## Quarto
-
--   The presentation is created using the Quarto CLI
-
--   `##` sets the start of a new slide
-
-## Layouts
-
-You can use plain text
-
-::: columns
-::: {.column width="40%"}
--   or bullet points[^1]
-:::
-
-::: {.column width="60%"}
-or in two columns
-:::
-:::
-
-[^1]: And add footnotes
-
--   like
-
--   this
-
-## Code
-
-```{python}
-from sklearn.linear_model import LinearRegression
-import statsmodels.api as sm
-import pandas as pd
-
-# Fit a linear regression model
-X = mtcars[['speed']]
-y = mtcars['mpg']
-model = LinearRegression().fit(X, y)
-
-# Summary of the model
-X2 = sm.add_constant(X)
-est = sm.OLS(y, X2)
-est2 = est.fit()
-print(est2.summary())
-```
-
-## Plots
-
-```{python}
-penguins['species'] = penguins['species'].apply(lambda x: "Adelie" if x == "Adelie" else "Other")
-sns.scatterplot(data=penguins, x='flipper_length_mm', y='body_mass_g', hue='species')
+df = pd.read_csv('teen_phone_addiction_dataset.csv')
+sns.scatterplot(data=df, x='Daily_Usage_Hours', y='Sleep_Hours', hue='Addiction_Level', palette='coolwarm')
+plt.title("Daily Usage vs Sleep Hours")
 plt.show()
 ```
 
-## Plot and text
+Teens with high daily usage often have lower sleep hours.
 
-::: columns
-::: {.column width="50%"}
--   Some text
+An initial visual check suggests potential anomalies.
 
--   goes here
-:::
-
-::: {.column width="50%"}
+## Correlation Heatmap
 ```{python}
-#| warning: false
-#| fig.width: 5.5
-fig, ax = plt.subplots(figsize=(5.5, 5.5 * 0.618))
-sns.boxplot(data=penguins, x='bill_length_mm', y='species', hue='species', ax=ax)
+
+corr = df.corr()
+plt.figure(figsize=(10,8))
+sns.heatmap(corr, annot=True, cmap='coolwarm')
+plt.title("Feature Correlation")
 plt.show()
 ```
-:::
-:::
 
-# A new section...
+Strong correlations between Daily_Usage_Hours and Addiction_Level.
 
-## Tables
+Other factors: Screen_Time_Before_Bed, Phone_Checks_Per_Day.
 
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
+# Anomaly Detection
+## Isolation Forest
 ```{python}
-penguins.head().to_html()
+
+features = ['Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance', 'Screen_Time_Before_Bed', 'Phone_Checks_Per_Day']
+X = df[features]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+iso = IsolationForest(contamination=0.1, random_state=42)
+df['Anomaly'] = iso.fit_predict(X_scaled)
+sns.scatterplot(data=df, x='Daily_Usage_Hours', y='Sleep_Hours', hue='Anomaly', palette={1:'green', -1:'red'})
+plt.title("Anomaly Detection: Daily Usage vs Sleep")
+plt.show()
 ```
 
-## Images
+Red points indicate teens flagged as potential addiction anomalies.
 
-![Image credit: Danielle Navarro, Percolate.](images/watercolour_sys02_img34_teacup-ocean.png){fig-align="center" width="500"}
+Isolation Forest helps detect teens deviating from normal usage patterns.
 
-## Math Expressions {.smaller}
+## Principal Component Analysis (PCA)
+```{python}
 
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. \$\\alpha+\\beta\$ renders $\alpha + \beta$. You can use the display style with double dollar signs:
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df['PC1'] = X_pca[:,0]
+df['PC2'] = X_pca[:,1]
 
-```         
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
+sns.scatterplot(data=df, x='PC1', y='PC2', hue='Anomaly', palette={1:'green', -1:'red'})
+plt.title("PCA Visualization of Anomalies")
+plt.show()
 ```
 
-$$
-\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i
-$$
+PCA reduces dimensionality for visualization.
 
-Limitations:
+Highlights clustering of normal teens vs anomalies.
 
-1.  The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
+## Interactive Exploration
+```{python}
 
-2.  There should not be spaces after the opening `$` or before the closing `$`.
+daily_usage_slider = widgets.FloatSlider(min=df['Daily_Usage_Hours'].min(), max=df['Daily_Usage_Hours'].max(), value=df['Daily_Usage_Hours'].mean(), description='Daily Usage')
+sleep_slider = widgets.FloatSlider(min=df['Sleep_Hours'].min(), max=df['Sleep_Hours'].max(), value=df['Sleep_Hours'].mean(), description='Sleep Hours')
 
-# Wrap up
+def filter_anomalies(daily_usage, sleep_hours):
+    filtered = df[(df['Daily_Usage_Hours']>=daily_usage-0.5) & (df['Daily_Usage_Hours']<=daily_usage+0.5) &
+                  (df['Sleep_Hours']>=sleep_hours-0.5) & (df['Sleep_Hours']<=sleep_hours+0.5) &
+                  (df['Anomaly']==-1)]
+    display(filtered[['ID','Name','Daily_Usage_Hours','Sleep_Hours','Addiction_Level']])
 
-## Feeling adventurous?
+widgets.interact(filter_anomalies, daily_usage=daily_usage_slider, sleep_hours=sleep_slider)
+```
 
--   You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+Explore specific teens flagged as anomalies based on interactive sliders.
 
--   But some of you might want to play around with slide styling. Some solutions for this can be found at https://quarto.org/docs/presentations/revealjs.
+# Key Findings
+Teens with high daily phone usage and low sleep are at higher risk.
+
+Isolation Forest effectively identifies outliers in multidimensional data.
+
+Features like Screen Time Before Bed and Phone Checks Per Day are strong indicators.
+
+# Next Steps
+Incorporate more mental health indicators.
+
+Build predictive models for addiction risk scoring.
+
+Explore temporal patterns of phone usage.

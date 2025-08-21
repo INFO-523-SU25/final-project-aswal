@@ -1,0 +1,460 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Detecting Potential Teen Smartphone Addiction via Anomaly Detection\"\n",
+        "subtitle: \"INFO 523 - Final Project\"\n",
+        "author: \n",
+        "  - name: \"Vivek Aswal\"\n",
+        "    affiliations:\n",
+        "      - name: \"College of Information Science, University of Arizona\"\n",
+        "description: \"Identify anomalous patterns in teen smartphone usage data to detect potential smartphone addiction and associated behavioral impacts.\"\n",
+        "format:\n",
+        "   html:\n",
+        "    code-tools: true\n",
+        "    code-overflow: wrap\n",
+        "    embed-resources: true\n",
+        "editor: visual\n",
+        "execute:\n",
+        "  warning: false\n",
+        "  echo: false\n",
+        "jupyter: python3\n",
+        "---\n",
+        "\n",
+        "## Abstract\n",
+        "\n",
+        "Smartphone usage among teenagers has seen a dramatic increase over the past decade, raising growing concerns about digital overdependence and its potential psychological, social, and academic consequences. This project explores the detection of potential smartphone addiction among teens by applying anomaly detection techniques to usage pattern data. Using a publicly available dataset from Kaggle, we analyze daily app usage, screen time, sleep duration, and activity logs to identify behavioral anomalies that may signal addictive tendencies. By leveraging unsupervised learning models such as Isolation Forest and Autoencoders, we aim to uncover hidden patterns and outliers in the data. The outcome of this work could support the early detection of problematic phone use and inform interventions by parents, educators, and mental health professionals. Our study emphasizes the role of data science in addressing contemporary behavioral health challenges in the digital age.\n",
+        "\n",
+        "\n",
+        "## Introduction\n",
+        "\n",
+        "Smartphone addiction among teens is a growing concern worldwide. Excessive use of social media, gaming apps, and late-night usage can affect mental health, sleep, and academic performance. Early identification of anomalous usage patterns can help in designing interventions. This project uses anomaly detection techniques to detect teens whose usage patterns deviate significantly from the norm.\n",
+        "\n",
+        "## Dataset Description\n",
+        "\n",
+        "The dataset `teen_phone_addiction_dataset.csv` contains detailed information about teen smartphone usage and associated behavioral, academic, and social factors. Each record corresponds to a unique teen, capturing daily habits and psychological indicators.\n",
+        "\n",
+        "| Variable                     | Type        | Description                                      |\n",
+        "|-------------------------------|------------|-------------------------------------------------|\n",
+        "| `ID`                         | Integer    | Unique identifier for each teen                 |\n",
+        "| `Name`                       | Categorical| Teen's name                                     |\n",
+        "| `Age`                        | Integer    | Age of the teen                                 |\n",
+        "| `Gender`                     | Categorical| Gender of the teen (Male, Female, Other)       |\n",
+        "| `Location`                   | Categorical| Home location                                   |\n",
+        "| `School_Grade`               | Categorical| Current school grade                             |\n",
+        "| `Daily_Usage_Hours`          | Numeric    | Total daily phone usage in hours               |\n",
+        "| `Sleep_Hours`                | Numeric    | Average hours of sleep per day                 |\n",
+        "| `Academic_Performance`       | Numeric    | Academic performance score (0-100)            |\n",
+        "| `Social_Interactions`        | Numeric    | Average social interactions per day            |\n",
+        "| `Exercise_Hours`             | Numeric    | Hours spent on physical activity per day       |\n",
+        "| `Anxiety_Level`              | Numeric    | Anxiety level (0-10)                            |\n",
+        "| `Depression_Level`           | Numeric    | Depression level (0-10)                         |\n",
+        "| `Self_Esteem`                | Numeric    | Self-esteem score (0-10)                        |\n",
+        "| `Parental_Control`           | Numeric    | Level of parental control (0-10)               |\n",
+        "| `Screen_Time_Before_Bed`     | Numeric    | Phone usage in hours before bed                |\n",
+        "| `Phone_Checks_Per_Day`       | Numeric    | Number of times phone is checked daily         |\n",
+        "| `Apps_Used_Daily`            | Numeric    | Number of apps used daily                       |\n",
+        "| `Time_on_Social_Media`       | Numeric    | Hours spent on social media                     |\n",
+        "| `Time_on_Gaming`             | Numeric    | Hours spent on gaming                           |\n",
+        "| `Time_on_Education`          | Numeric    | Hours spent on educational apps                |\n",
+        "| `Phone_Usage_Purpose`        | Categorical| Primary purpose of phone usage                 |\n",
+        "| `Family_Communication`       | Numeric    | Level of family communication (0-10)          |\n",
+        "| `Weekend_Usage_Hours`        | Numeric    | Phone usage on weekends in hours               |\n",
+        "| `Addiction_Level`            | Numeric    | Overall addiction risk score (0-10)           |\n",
+        "\n",
+        "This dataset will be used for anomaly detection to identify teens at risk of potential smartphone addiction based on their usage patterns, lifestyle, and psychological factors."
+      ],
+      "id": "254c688d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "message": false
+      },
+      "source": [
+        "#| label: load-data\n",
+        "import pandas as pd\n",
+        "\n",
+        "# Load the dataset\n",
+        "data_path = \"data/teen_phone_addiction_dataset.csv\"\n",
+        "df = pd.read_csv(data_path)\n",
+        "\n",
+        "# Display first few rows\n",
+        "df.head()"
+      ],
+      "id": "load-data",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Exploratory Data Analysis (EDA)\n",
+        "\n",
+        "In this section, we explore the dataset to understand the distribution of features, identify potential anomalies, and examine relationships between smartphone usage and behavioral or psychological indicators."
+      ],
+      "id": "123ec189"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "message": false
+      },
+      "source": [
+        "#| label: eda-imports\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "import numpy as np\n",
+        "\n",
+        "# Display all columns\n",
+        "df.columns"
+      ],
+      "id": "eda-imports",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Summary Statistics"
+      ],
+      "id": "6786197a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "message": false
+      },
+      "source": [
+        "#| label: summary-stats\n",
+        "# Basic statistics for numeric columns\n",
+        "df.describe()"
+      ],
+      "id": "summary-stats",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Distribution of Key Numeric Features\n",
+        "We examine the distributions of Daily_Usage_Hours, Sleep_Hours, Academic_Performance, Anxiety_Level, Depression_Level, and Self_Esteem."
+      ],
+      "id": "34dbf1ac"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: distribution-plots\n",
+        "numeric_features = ['Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance', \n",
+        "                    'Social_Interactions', 'Exercise_Hours', 'Anxiety_Level', \n",
+        "                    'Depression_Level', 'Self_Esteem', 'Screen_Time_Before_Bed', \n",
+        "                    'Phone_Checks_Per_Day', 'Apps_Used_Daily', 'Time_on_Social_Media', \n",
+        "                    'Time_on_Gaming', 'Time_on_Education', 'Family_Communication', \n",
+        "                    'Weekend_Usage_Hours', 'Addiction_Level']\n",
+        "\n",
+        "# Histograms\n",
+        "for col in numeric_features:\n",
+        "    plt.figure(figsize=(8,4))\n",
+        "    sns.histplot(df[col], kde=True, bins=20)\n",
+        "    plt.title(f'Distribution of {col}')\n",
+        "    plt.show()"
+      ],
+      "id": "distribution-plots",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Correlation Analysis\n",
+        "We check correlations between numeric features to understand relationships between phone usage, behavioral, and psychological metrics."
+      ],
+      "id": "d0d59eee"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: correlation\n",
+        "plt.figure(figsize=(12,10))\n",
+        "corr = df[numeric_features].corr()\n",
+        "sns.heatmap(corr, annot=True, fmt=\".2f\", cmap='coolwarm')\n",
+        "plt.title(\"Correlation Heatmap\")\n",
+        "plt.show()"
+      ],
+      "id": "correlation",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Gender vs. Daily Phone Usage"
+      ],
+      "id": "4c2747c1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: gender-usage\n",
+        "plt.figure(figsize=(8,5))\n",
+        "sns.boxplot(x='Gender', y='Daily_Usage_Hours', data=df)\n",
+        "plt.title(\"Daily Phone Usage by Gender\")\n",
+        "plt.show()"
+      ],
+      "id": "gender-usage",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Scatter Plot: Phone Usage vs. Sleep"
+      ],
+      "id": "851d0aee"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: usage-sleep\n",
+        "plt.figure(figsize=(8,5))\n",
+        "sns.scatterplot(x='Daily_Usage_Hours', y='Sleep_Hours', hue='Addiction_Level', data=df, palette='viridis')\n",
+        "plt.title(\"Daily Phone Usage vs Sleep Hours\")\n",
+        "plt.show()"
+      ],
+      "id": "usage-sleep",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Identifying Potential Outliers\n",
+        "\n",
+        "We will use the Z-score method to detect extreme values (potential anomalies) in `Daily_Usage_Hours` and `Addiction_Level`."
+      ],
+      "id": "2ad97db2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: outliers\n",
+        "from scipy import stats\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "\n",
+        "# Select numeric columns to check for outliers\n",
+        "numeric_cols = ['Daily_Usage_Hours', 'Addiction_Level']\n",
+        "\n",
+        "# Compute Z-scores\n",
+        "z_scores = stats.zscore(df[numeric_cols])\n",
+        "abs_z_scores = np.abs(z_scores)\n",
+        "\n",
+        "# Identify rows where Z-score > 3 in any column\n",
+        "outliers = df[(abs_z_scores > 3).any(axis=1)]\n",
+        "\n",
+        "# Display detected outliers\n",
+        "print(\"Detected Outliers:\")\n",
+        "display(outliers)\n",
+        "\n",
+        "# Visualize outliers\n",
+        "for col in numeric_cols:\n",
+        "    plt.figure(figsize=(8,4))\n",
+        "    sns.boxplot(x=df[col])\n",
+        "    plt.title(f'Boxplot of {col} (Outliers Highlighted)')\n",
+        "    plt.scatter(outliers.index, outliers[col], color='red', zorder=10, label='Outliers')\n",
+        "    plt.legend()\n",
+        "    plt.show()"
+      ],
+      "id": "outliers",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Anomaly Detection: Teen Smartphone Addiction\n",
+        "\n",
+        "We will use Isolation Forest to identify potential anomalies in teen smartphone usage patterns, including excessive usage or high addiction levels."
+      ],
+      "id": "41315047"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: anomaly-detection\n",
+        "from sklearn.ensemble import IsolationForest\n",
+        "\n",
+        "# Select relevant numeric features for anomaly detection\n",
+        "features = [\n",
+        "    'Daily_Usage_Hours', 'Sleep_Hours', 'Academic_Performance',\n",
+        "    'Social_Interactions', 'Exercise_Hours', 'Anxiety_Level',\n",
+        "    'Depression_Level', 'Self_Esteem', 'Parental_Control',\n",
+        "    'Screen_Time_Before_Bed', 'Phone_Checks_Per_Day', 'Apps_Used_Daily',\n",
+        "    'Time_on_Social_Media', 'Time_on_Gaming', 'Time_on_Education',\n",
+        "    'Weekend_Usage_Hours', 'Addiction_Level'\n",
+        "]\n",
+        "\n",
+        "X = df[features]\n",
+        "\n",
+        "# Initialize Isolation Forest\n",
+        "iso_forest = IsolationForest(\n",
+        "    n_estimators=100,\n",
+        "    contamination=0.05,  # Assumes ~5% of teens are anomalous\n",
+        "    random_state=42\n",
+        ")\n",
+        "\n",
+        "# Fit model\n",
+        "iso_forest.fit(X)\n",
+        "\n",
+        "# Predict anomalies: -1 indicates anomaly, 1 indicates normal\n",
+        "df['Anomaly'] = iso_forest.predict(X)\n",
+        "\n",
+        "# Separate normal vs anomalous records\n",
+        "anomalies = df[df['Anomaly'] == -1]\n",
+        "normal = df[df['Anomaly'] == 1]\n",
+        "\n",
+        "print(f\"Detected {len(anomalies)} potential anomalies out of {len(df)} records\")\n",
+        "display(anomalies)\n",
+        "\n",
+        "# Visualize anomalies\n",
+        "plt.figure(figsize=(10,6))\n",
+        "sns.scatterplot(\n",
+        "    data=df,\n",
+        "    x='Daily_Usage_Hours',\n",
+        "    y='Addiction_Level',\n",
+        "    hue='Anomaly',\n",
+        "    palette={1:'blue', -1:'red'},\n",
+        "    s=80\n",
+        ")\n",
+        "plt.title('Isolation Forest Anomaly Detection')\n",
+        "plt.xlabel('Daily Usage Hours')\n",
+        "plt.ylabel('Addiction Level')\n",
+        "plt.show()"
+      ],
+      "id": "anomaly-detection",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### Interpretation:\n",
+        "\n",
+        "Red points indicate potential high-risk teens.\n",
+        "\n",
+        "Isolation Forest detects anomalies considering multiple behavioral and academic features.\n",
+        "\n",
+        "These teens may require attention or intervention.\n",
+        "\n",
+        "### Conclusion\n",
+        "\n",
+        "Teen smartphone addiction can be identified using multi-feature anomaly detection.\n",
+        "\n",
+        "Daily phone usage, sleep patterns, mental health, and academic performance all contribute to the detection model.\n",
+        "\n",
+        "Isolation Forest effectively highlights teens with unusual behavior patterns indicative of potential addiction.\n",
+        "\n",
+        "Future work could include larger datasets, longitudinal analysis, or supervised classification for predictive modeling.\n",
+        "\n",
+        "\n",
+        "## Interactive Exploration Dashboard\n",
+        "\n",
+        "This dashboard allows interactive exploration of anomalies detected in teen smartphone usage. Users can filter by **Daily Usage Hours**, **Addiction Level**, or **Sleep Hours** to inspect specific teens at risk."
+      ],
+      "id": "997b5f2b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: interactive-dashboard\n",
+        "import ipywidgets as widgets\n",
+        "from IPython.display import display\n",
+        "\n",
+        "# Define sliders for key features\n",
+        "daily_usage_slider = widgets.FloatSlider(\n",
+        "    value=df['Daily_Usage_Hours'].mean(),\n",
+        "    min=df['Daily_Usage_Hours'].min(),\n",
+        "    max=df['Daily_Usage_Hours'].max(),\n",
+        "    step=0.1,\n",
+        "    description='Daily Usage Hours:',\n",
+        "    continuous_update=False\n",
+        ")\n",
+        "\n",
+        "addiction_level_slider = widgets.FloatSlider(\n",
+        "    value=df['Addiction_Level'].mean(),\n",
+        "    min=df['Addiction_Level'].min(),\n",
+        "    max=df['Addiction_Level'].max(),\n",
+        "    step=0.1,\n",
+        "    description='Addiction Level:',\n",
+        "    continuous_update=False\n",
+        ")\n",
+        "\n",
+        "sleep_hours_slider = widgets.FloatSlider(\n",
+        "    value=df['Sleep_Hours'].mean(),\n",
+        "    min=df['Sleep_Hours'].min(),\n",
+        "    max=df['Sleep_Hours'].max(),\n",
+        "    step=0.1,\n",
+        "    description='Sleep Hours:',\n",
+        "    continuous_update=False\n",
+        ")\n",
+        "\n",
+        "# Function to filter anomalies based on slider values\n",
+        "def filter_anomalies(daily_usage, addiction_level, sleep_hours):\n",
+        "    filtered = anomalies[\n",
+        "        (anomalies['Daily_Usage_Hours'] >= daily_usage - 1) &\n",
+        "        (anomalies['Daily_Usage_Hours'] <= daily_usage + 1) &\n",
+        "        (anomalies['Addiction_Level'] >= addiction_level - 1) &\n",
+        "        (anomalies['Addiction_Level'] <= addiction_level + 1) &\n",
+        "        (anomalies['Sleep_Hours'] >= sleep_hours - 1) &\n",
+        "        (anomalies['Sleep_Hours'] <= sleep_hours + 1)\n",
+        "    ]\n",
+        "    if filtered.empty:\n",
+        "        print(\"No anomalies in this range.\")\n",
+        "    else:\n",
+        "        display(filtered[['ID','Name','Age','Gender','Daily_Usage_Hours','Sleep_Hours','Addiction_Level']])\n",
+        "\n",
+        "# Create interactive widget\n",
+        "widgets.interact(\n",
+        "    filter_anomalies,\n",
+        "    daily_usage=daily_usage_slider,\n",
+        "    addiction_level=addiction_level_slider,\n",
+        "    sleep_hours=sleep_hours_slider\n",
+        ")"
+      ],
+      "id": "interactive-dashboard",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "c:\\Users\\itsak\\AppData\\Local\\Programs\\Python\\Python313\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
